@@ -1,0 +1,14 @@
+
+Note: to run this project with HSQLDB (easiest way):
+1. Start the HSQLDB server as explained in JdbcCheckup.java or use
+   "ant start-hsqldb" after cd'ing to the database directory here. Let it hang.
+   Create a new window to proceed.
+   
+2. Use "ant load-hsqldb" (in database directory)
+   
+3. Use "ant hsqlSysTest" when cd'd to this directory. Also use runAdminApp and runUserApp to run their apps. 
+
+To use a real DB: you need to define environment variables as discussed in build.xml
+  For Oracle database, set up env variables ORACLE_USER, ORACLE_PW, ORACLE_SITE
+  For MySQL use, set up env vars MYSQL_USER, MYSQL_PW, MYSQL_SITE
+See docs linked from the class web page for details.  

@@ -1,0 +1,8 @@
+JDBC drivers for Oracle, mysql, and HSQLDB:
+ojdbc6.jar:  Oracle 10g JDBC driver from dbs2.cs.umb.edu's Oracle distro.
+mysql-connector-java-5.1.39-bin.jar: MySql 5 JDBC driver, downloaded from dev.mysql.com
+hsqldb.jar: v 2.3, memory-resident database, see http://www.hsqldb.org
+Other jars:
+junit-4.12.jar: Junit v 4.12, for unit testing
+hamcrest-core-1.3.jar: needed for junit
+jl1.0.1.jar: for playing mp3 files (optional)

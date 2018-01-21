@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- music1-setup build file (same as pizza1's, except pizza replaced with music)
+ Requires JDK's bin and ant's bin on command-line's path (check that javac 
+      and ant work on the command line)
+  Requires database tables set up: use build.xml in subdirectory database.
+  For Oracle, requires env variables ORACLE_USER, ORACLE_PW, ORACLE_SITE
+  ORACLE_SITE should be dbs2.cs.umb.edu:1521:dbs2 inside cs.umb.edu.
+  From outside, use a plink tunnel and ORACLE_SITE localhost:1521:dbs2 
+  The tunnel uses local port 1521, remote dbs2.cs.umb.edu:1521
+  For MySQL use, requires env vars MYSQL_SITE, MYSQL_USER, MYSQL_PW.
+  MYSQL_SITE should be "localhost:3333" at home (for tunnel 
+  to topcat.cs.umb.edu), and "topcat.cs.umb.edu" at cs.umb.edu.	
+  For HSQLDB use, no user/password info is needed, but you need to
+   start the hsqldb server (see build.xml in subdir database).
+-->
+<project name="music1" default="build" basedir=".">
+	<!--Load environment variables and give them prefix "env." -->
+	<property environment="env"/>
+	<!-- assemble DB URLs from env vars. Examples:
+	 "jdbc:oracle:thin:@localhost:1531:dbs2"  from home, via plink tunnel
+	 "jdbc:oracle:thin:@dbs2.cs.umb.edu:1521:dbs2" from inside cs.umb.edu firewall
+	 "jdbc:mysql://topcat.cs.umb.edu/joedb" for mysql user joe
+	 "jdbc:mysql://localhost:3333/joedb" when using tunnel to topcat
+	    -->	    
+	<property name="ORACLE_URL" value="jdbc:oracle:thin:@${env.ORACLE_SITE}"/>
+	<property name="MYSQL_URL" value = "jdbc:mysql://${env.MYSQL_SITE}/${env.MYSQL_USER}db"/>
+	
+	<property name="classes" location="bin"/>
+
+	<path id="project.classpath">
+		<pathelement location="bin"/>
+		<fileset dir="lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	<target name="init">
+		<mkdir dir="${classes}"/>
+	</target>
+	<target name="clean">
+		<delete dir="${classes}"/>
+	</target>
+	<target name="build" depends="init">
+		<echo message="${ant.project.name}: ${ant.file}"/>
+		<javac destdir="${classes}" debug="on">
+			<src path="src"/>
+			<classpath refid="project.classpath"/>
+		</javac>
+	</target>
+	<target name="test" depends="testBL, testDAO"/>
+	<!-- set up "testBL" to run all BL (business layer) unit tests -->
+	<target name="testBL" depends="testBL1"/>
+	<target name="testBL1" depends="build">
+	    <echo message=" testBL1 not yet implemented (NYI)" />
+	<!-- NYI 	
+	    <junit fork="true">
+			<formatter type="brief" usefile="false"/>
+			<test name="cs636.music.service.AdminServiceTest1"/>
+			<classpath refid="project.classpath"/>
+		</junit>
+		-->
+	</target>
+	<!-- set up one target "testDAO" to run all DAO unit tests -->
+	<target name="testDAO" depends="testDAO1"/>
+	<target name="testDAO1" depends="build">
+	     <echo message=" testDAO1 not yet implemented (NYI)" />
+	<!-- NYI 
+	 	<junit fork="true">
+			<formatter type="brief" usefile="false"/>
+			<test name="cs636.music.dao.DAOTest1"/>
+			<classpath refid="project.classpath"/>
+		</junit>
+		-->
+	</target>
+	
+	<target name="oraSysTest" depends="build">
+		<java fork="true" classname="cs636.music.presentation.SystemTest" 
+			failonerror="true" dir="${basedir}">
+			<classpath refid="project.classpath"/>
+			<arg value="${ORACLE_URL}"/>
+			<arg value="${env.ORACLE_USER}"/>
+			<arg value="${env.ORACLE_PW}"/>
+			<arg file="test.dat"/>
+		</java>
+	</target>
+	<target name="oraTest" depends="build">
+		<java fork="true" classname="cs636.music.presentation.Register" 
+			failonerror="true" dir="${basedir}">
+			<classpath refid="project.classpath"/>
+			<arg value="${ORACLE_URL}"/>
+			<arg value="${env.ORACLE_USER}"/>
+			<arg value="${env.ORACLE_PW}"/>
+		</java>
+	</target>
+	<target name="mysqlSysTest" depends="build">
+		<java fork="true" classname="cs636.music.presentation.SystemTest" 
+			failonerror="true" dir="${basedir}">
+			<classpath refid="project.classpath"/>
+			<arg value="${MYSQL_URL}"/>
+			<arg value="${env.MYSQL_USER}"/>
+			<arg value="${env.MYSQL_PW}"/>
+			<arg file="test.dat"/>
+		</java>
+	</target>
+	<target name="mysqlTest" depends="build">
+		<java fork="true" classname="cs636.music.presentation.Register" 
+			failonerror="true" dir="${basedir}">
+			<classpath refid="project.classpath"/>
+			<arg value="${MYSQL_URL}"/>
+			<arg value="${env.MYSQL_USER}"/>
+			<arg value="${env.MYSQL_PW}"/>
+		</java>
+	</target>
+	<target name="hsqlSysTest" depends="build">
+		<java fork="true" classname="cs636.music.presentation.SystemTest" 
+			failonerror="true" dir="${basedir}">
+			<classpath refid="project.classpath"/>
+			<arg file="test.dat"/>  <!-- URL known inside app -->
+		</java>
+	</target>
+	<target name="hsqlTest" depends="build">
+		<java fork="true" classname="cs636.music.presentation.Register" 
+			failonerror="true" dir="${basedir}">
+			<classpath refid="project.classpath"/> <!-- URL known inside app -->
+		</java>
+	</target>
+</project>
